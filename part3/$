@@ -1,0 +1,14 @@
+
+data "terraform_remote_state" "vpc" {
+  backend = "s3"
+  config {
+    bucket = "my-terraform-remote-state"
+    key = "stage/vpc/terraform.tfstate"    
+    region = "us-east-1"
+  }
+}
+
+resource "aws_elb" "example" {
+  name = "example"
+  subnets = ["${data.terraform_remote_state.vpc.public_subnet_ids}"]
+}
